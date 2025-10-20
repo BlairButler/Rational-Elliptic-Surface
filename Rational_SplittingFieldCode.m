@@ -1,9 +1,9 @@
-/*When on Toby*/
+/*When on Toby
 Attach("/home/blair/+IdealsNF.m");
 Attach("/home/blair/Subfields.m");
 Attach("/home/blair/Galois.m");
 Attach("/home/blair/GalAuto.m");
-Attach("/home/blair/Invar.m");
+Attach("/home/blair/Invar.m"); */
 
 
 Attach("+IdealsNF.m");
@@ -179,9 +179,4 @@ E:=EllipticCurve([0,t*(t^3+1)]);
 
 Rank 8
 E:=EllipticCurve([0,t^5+1]); */
-
-I2L:=ChangeRing(P[1],K);
-La:=Generic(I2L);
-IL2p:=I2L + ideal<La | La.1-r>;
-X2:=GroebnerBasis(IL2p);
 
