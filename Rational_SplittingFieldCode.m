@@ -1,12 +1,12 @@
-/*When on Toby
+/*When on Toby*/
 Attach("/home/blair/+IdealsNF.m");
 Attach("/home/blair/Subfields.m");
 Attach("/home/blair/Galois.m");
 Attach("/home/blair/GalAuto.m");
-Attach("/home/blair/Invar.m"); */
+Attach("/home/blair/Invar.m");
 
 
-Attach("+IdealsNF.m");
+
 Attach("AutSplit.m");
 
 _<t>:=FunctionField(Rationals());
@@ -80,10 +80,10 @@ function PrimeUse(poly);
 test:=0;
 while test eq 0 do;
 p:=RandomPrime(20);
-Kp:=GF(p);
-_<x>:=PolynomialRing(Kp);
+e1p:=GF(p);
+_<x>:=PolynomialRing(e1p);
 
-polyP:=[ChangeRing(i,Kp) : i in poly];
+polyP:=[ChangeRing(i,e1p) : i in poly];
 
 
 test:=1;
@@ -93,11 +93,11 @@ test:=0;
 end if;
 end for;
 
-Gpideal:=ideal(e1,p);
-Factorization(~Gpideal);
-primeID:=e1`PrimeIdeals[p,1];
+ZK:= RingOfIntegers(e1);
+Gpideal:=p*ZK;
+primeID:=Factorization(Gpideal)[1][1];
 
-if e1`PrimeIdeals[p,1]`f gt 1 then;
+if RamificationDegree(primeID,p) gt 1 then;
 test:=0;
 end if;
 
@@ -111,25 +111,32 @@ p,primeID:=PrimeUse(poly);
 Gp:=GF(p);
 Gz<z>:=PolynomialRing(Gp);
 Gtp<tp>:=FunctionField(Gp);
-Ep:=ChangeRing(E,Gtp);
-gal:=Inverse(NumberingMap(e2));
 
+gal:=Inverse(NumberingMap(e2));
+ZK:= RingOfIntegers(e1);
+FFpp, mpp :=ResidueClassField(primeID);
+Fpt<tp>:=FunctionField(FFpp);
+ZKt<tt> :=PolynomialRing(ZK);
+Ep:=ChangeRing(E,Fpt);
+bar := map<ZKt -> Fpt | f :-> Fpt![mpp(c) : c in Eltseq(f)]>;
 
 Pp:=[];
 for i in [1 .. #P] do;
-Pp[i]:=Ep![Gp!(Coefficient(Numerator(P[i][1]),2) mod primeID)*tp^2+Gp!(Coefficient(Numerator(P[i][1]),1) mod primeID)*tp+Gp!(Coefficient(Numerator(P[i][1]),0) mod primeID),Gp!(Coefficient(Numerator(P[i][2]),3) mod primeID)*tp^3+Gp!(Coefficient(Numerator(P[i][2]),2) mod primeID)*tp^2+Gp!(Coefficient(Numerator(P[i][2]),1) mod primeID)*tp+Gp!(Coefficient(Numerator(P[i][2]),0) mod primeID),1];
+Pp[i]:=Ep![FFpp!(1/Denominator(Coefficient(Numerator(P[i][1]),2)))*bar(Numerator(Coefficient(Numerator(P[i][1]),2)))*tp^2+FFpp!(1/Denominator(Coefficient(Numerator(P[i][1]),1)))*bar(Numerator(Coefficient(Numerator(P[i][1]),1)))*tp+FFpp!(1/Denominator(Coefficient(Numerator(P[i][1]),0)))*bar(Numerator(Coefficient(Numerator(P[i][1]),0))),FFpp!(1/Denominator(Coefficient(Numerator(P[i][2]),3)))*bar(Numerator(Coefficient(Numerator(P[i][2]),3)))*tp^3+FFpp!(1/Denominator(Coefficient(Numerator(P[i][2]),2)))*bar(Numerator(Coefficient(Numerator(P[i][2]),2)))*tp^2+FFpp!(1/Denominator(Coefficient(Numerator(P[i][2]),1)))*bar(Numerator(Coefficient(Numerator(P[i][2]),1)))*tp+FFpp!(1/Denominator(Coefficient(Numerator(P[i][2]),0)))*bar(Numerator(Coefficient(Numerator(P[i][2]),0))),1];
 end for; 
 
 Sp:=IndependentGenerators(Pp);
 S:=[P[Index(Pp,Sp[i])] : i in [1 .. #Sp] ];
-
 
 M:=[];
 time for i in [1 .. #e2] do;
 g:=[];
 m:=[];
 for j in [1 .. #S] do;
-point:=Ep![(e3(gal(i))(Coefficient(Numerator(S[j][1]),2))mod primeID)*tp^2 + (e3(gal(i))(Coefficient(Numerator(S[j][1]),1))mod primeID)*tp + (1*e3(gal(i))(Coefficient(Numerator(S[j][1]),0))mod primeID),(e3(gal(i))(Coefficient(Numerator(S[j][2]),3))mod primeID)*tp^3 + (e3(gal(i))(Coefficient(Numerator(S[j][2]),2))mod primeID)*tp^2 + (e3(gal(i))(Coefficient(Numerator(S[j][2]),1))mod primeID)*tp + (e3(gal(i))(Coefficient(Numerator(S[j][2]),0))*1mod primeID)];
+bb:=[(e3(gal(i))(Coefficient(Numerator(S[j][1]),2))),(e3(gal(i))(Coefficient(Numerator(S[j][1]),1))),(1*e3(gal(i))(Coefficient(Numerator(S[j][1]),0))),(e3(gal(i))(Coefficient(Numerator(S[j][2]),3))),(e3(gal(i))(Coefficient(Numerator(S[j][2]),2))),(e3(gal(i))(Coefficient(Numerator(S[j][2]),1))),(e3(gal(i))(Coefficient(Numerator(S[j][2]),0))*1)];
+
+point:=Ep![FFpp!(1/Denominator(bb[1]))*bar(Numerator(bb[1]))*tp^2 + FFpp!(1/Denominator(bb[2]))*bar(Numerator(bb[2]))*tp + FFpp!(1/Denominator(bb[3]))*bar(Numerator(bb[3])),FFpp!(1/Denominator(bb[4]))*bar(Numerator(bb[4]))*tp^3 + FFpp!(1/Denominator(bb[5]))*bar(Numerator(bb[5]))*tp^2 + FFpp!(1/Denominator(bb[6]))*bar(Numerator(bb[6]))*tp + FFpp!(1/Denominator(bb[7]))*bar(Numerator(bb[7])),1];
+
 _,g[j]:=IsLinearlyDependent(Append(Sp,point));
 gg:=ElementToSequence(g[j]);
 if gg[#gg] eq -1 then;
@@ -144,10 +151,7 @@ GalG:=MatrixGroup<#S,Rationals()|M>;
 
 can,iso:=IsIsomorphic(e2,GalG);
 
-
-
 yum:=[M[Index(M,Eltseq(iso(e2.i)))] : i in [1 .. #Generators(e2)]];
-
 
 
 A:=MatrixAlgebra<Rationals(),#S|yum>;
@@ -179,4 +183,3 @@ E:=EllipticCurve([0,t*(t^3+1)]);
 
 Rank 8
 E:=EllipticCurve([0,t^5+1]); */
-
