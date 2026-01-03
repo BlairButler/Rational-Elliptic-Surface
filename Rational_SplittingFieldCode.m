@@ -60,7 +60,7 @@ end while;
 pols:=[DefiningPolynomial(i) : i in IsomClass];
 
 //K:=SplittingField(pols);
-time e1,e2,e3,e4 := SplitAutGrp(poly:Prime := NextPrime(10^6)); //Replace K with this//
+time e1,e2,e3,e4 := SplitAutGrp(pols:Prime := NextPrime(10^6)); //Replace K with this//
 
 //Next up I want the 240 points.
 //Cheat way: 
