@@ -1,0 +1,61 @@
+Rx<x>:=PolynomialRing(Rationals());
+pols:=[
+x^2-x+1,
+x^4 + x^3 + x^2 + x + 1,
+-14348907+12597120*x^4+4096*x^8,
+4*x^3-1,
+x^8+18*x^4-27,
+x^18 + 1229/18*x^12 + 8371/3888*x^6 + 1/1259712,
+x^27 + 1229/18*x^18 + 8371/3888*x^9 + 1/1259712,
+x^18 + 2516992/9*x^12 + 8777629696/243*x^6 + 1073741824/19683,
+x^27 + 2516992/9*x^18 + 8777629696/243*x^9 + 1073741824/19683,
+x^8 + 72*x^6 - 270*x^4 + 729/5,
+x^12 + 76*x^9 - 48*x^6 - 320*x^3 - 256/5,
+x^40 + 91188840960*x^30 + 18085024812736512/5*x^20 - 43047258401846329344/25*x^10 + 6499837226778624/3125,
+x^40 + 2002*x^30 - 8910209/1080*x^20 + 76483/675*x^10 + 1/583200000,
+x^60 + 2002*x^45 - 8910209/1080*x^30 + 76483/675*x^15 + 1/583200000,
+x^16 - 100*x^14 + 5000*x^12 + 7350*x^10 + 10951/2*x^8 - 3675*x^6 + 1250*x^4 + 25/2*x^2 + 1/16,
+x^24 - 100*x^21 + 5000*x^18 + 7350*x^15 + 10951/2*x^12 - 3675*x^9 + 1250*x^6 + 25/2*x^3 + 1/16,
+x^16 - 456601500*x^12 - 428631250*x^8 + 520312500*x^4 + 9765625,
+x^24 - 456601500*x^18 - 428631250*x^12 + 520312500*x^6 + 9765625];
+
+function find_scale(f)
+ mul := LCM([Denominator(a) : a in Coefficients(f)]);
+ f := f * mul;
+ f := f / GCD([Integers()!a : a in Coefficients(f)]);
+ lc := LeadingCoefficient(f);
+ if lc lt 0 then f := -f; end if;
+ lc := Integers()!LeadingCoefficient(f);
+ assert lc gt 0;
+ assert lc in Integers();
+ if lc eq 1 then return 1,f; end if;
+ scale := 1;
+ co := [Integers()!a : a in Coefficients(f)];
+ bas := CoprimeBasis(co);
+ bas := [a[1] : a in bas];
+ for fac in bas do
+  act := Gcd(lc,fac);
+  if act gt 1 and act lt 10^500 then
+   e1,e2 := TrialDivision(act:Proof := false);
+   for a in e1 do
+    p := a[1];
+    vl := [Valuation(c,p) : c in co];
+    ex := (Min([(vl[i] - vl[#vl]) / (#vl-i) : i in [1..#vl-1]]));
+    ex :=Ceiling(-ex);
+    scale := scale * p^ex;
+   end for;
+   for a in e2 do
+    scale := scale * a;
+   end for;
+  else
+   scale := scale * act;
+  end if;
+ end for;
+ co := [(co[i]*scale^(#co - i)) : i in [1..#co]];
+ ggt := Gcd(co);
+ co := [a div ggt : a in co];
+ return scale, Polynomial(co);
+end function;
+
+time G,r,S := GaloisGroup(pol);
+//Takes about 45 minutes
