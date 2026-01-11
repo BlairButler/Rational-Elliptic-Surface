@@ -1,5 +1,5 @@
 Rx<x>:=PolynomialRing(Rationals());
-pols:=[
+fl:=[
 x^2-x+1,
 x^4 + x^3 + x^2 + x + 1,
 -14348907+12597120*x^4+4096*x^8,
@@ -57,5 +57,7 @@ function find_scale(f)
  return scale, Polynomial(co);
 end function;
 
+prod := &*fl;
+scale, pol := find_scale(prod);
 time G,r,S := GaloisGroup(pol);
 //Takes about 45 minutes
