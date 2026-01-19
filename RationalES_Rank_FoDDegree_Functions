@@ -1,0 +1,76 @@
+//RatESRank(E); computes the rank of a rational elliptic surface by only considering the number of components at bad places.
+//RatESFoDDegree(E); computes the GaloisSubgroup of the field of definition of a rational elliptic surface.
+//In each case this is faster than the algothrim presented, but loses information of independent generating sections, and character of the representation
+
+R<t>:=FunctionField(Rationals());
+
+function RatESRank(E);
+
+rho:=0;
+H:= KodairaSymbols(E);
+for i in [1 .. #H] do;
+rho:= rho + (NumberOfComponents(H[i][1])-1);
+end for;
+
+Rank:= 8 -rho;
+return Rank;
+end function;
+
+
+function RatESFoDDegree(E);
+_<[a]> := PolynomialRing(Rationals(),7);
+_<tt> := PolynomialRing(Universe(a));
+x := a[1]*tt^2 + a[2]*tt + a[3];
+y := a[4]*tt^3 + a[5]*tt^2 + a[6]*tt + a[7];
+ftmap:=hom<Parent(t) -> Parent(tt)| tt>;
+coor:=[Parent(x)!ftmap(Coefficients(E))[i] : i in [1..5] ];
+cfs:= Coefficients(y^2 + coor[1]*x*y + coor[3]*y -x^3 - coor[2]*x^2-coor[4]*x-coor[5]);
+I:=ideal<Universe(a) | cfs>;
+_,P:=PrimaryDecomposition(I);
+
+_<z>:=PolynomialRing(Rationals());
+
+for i in [1 .. #P] do;
+b:=UnivariateEliminationIdealGenerators(P[i]);
+
+
+poly:=[];
+polyHigh:=[];
+
+for j in [1 .. #b] do;
+addPoly,_:=UnivariatePolynomial(b[j]);
+if Degree(addPoly) gt 1 then;
+
+if Degree(addPoly) lt 30 then;
+Include(~poly,addPoly); 
+else;
+Include(~polyHigh,addPoly);
+end if;
+end if;
+end for; end for;
+
+NumbFlds:=[OptimisedRepresentation(NumberField(i)) : i in poly];
+
+IsomClass:=[];
+while #NumbFlds gt 0 do;
+Append(~IsomClass,NumbFlds[1]);
+ridOf:=[NumbFlds[1]];
+for j in [2 .. #NumbFlds] do;
+if IsIsomorphic(NumbFlds[1],NumbFlds[j]) eq true then;
+Append(~ridOf,NumbFlds[j]);
+end if;
+end for;
+
+for j in [1 .. #ridOf] do;
+Exclude(~NumbFlds,ridOf[j]);
+end for;
+
+end while;
+
+pols:=[DefiningPolynomial(i) : i in IsomClass];
+for i in polyHigh do;
+Append(~pols,i); end for;
+
+G,r,S:=GaloisGroup(&*pols);
+return #G,G,r,S;
+end function;
