@@ -4,7 +4,7 @@ _<t>:=FunctionField(Rationals());
 
 function RatESInformation(E);
 
-_<[a]> := PolynomialRing(Rationals(),7);
+_<[a]> := PolynomialRing(Parent(t),7);
 _<tt> := PolynomialRing(Universe(a));
 x := a[1]*tt^2 + a[2]*tt + a[3];
 y := a[4]*tt^3 + a[5]*tt^2 + a[6]*tt + a[7];
