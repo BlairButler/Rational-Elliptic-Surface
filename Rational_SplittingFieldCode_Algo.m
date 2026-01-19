@@ -2,7 +2,7 @@ Attach("AutSplit.m");
 
 _<t>:=FunctionField(Rationals());
 
-function RationalEllipticSurface(E);
+function RatESInformation(E);
 
 _<[a]> := PolynomialRing(Rationals(),7);
 _<tt> := PolynomialRing(Universe(a));
@@ -117,6 +117,12 @@ end for;
 Sp:=IndependentGenerators(Pp);
 S:=[P[Index(Pp,Sp[i])] : i in [1 .. #Sp] ];
 
+r,e1,e2,S:=RationalEllipticSurface(E);
+end function;
+
+
+function RatESRepresentation(E,r,e1,e2,S);
+
 M:=[];
 time for i in [1 .. #e2] do;
 g:=[];
@@ -149,11 +155,12 @@ C:=GModule(e2,B);
 D:=ConstituentsWithMultiplicities(C);
 F:=[<Character(D[i][1]),D[i][2]> : i in [1 .. #D]];
 
-return #S, e1, e2,S,F;
+return F;
 
 end function;
 
 r,e1,e2,S,F:=RationalEllipticSurface(E);
+F:=RationalEllipticSurface(E,r,e1,e2,S,);
 
 /*
 Examples:
