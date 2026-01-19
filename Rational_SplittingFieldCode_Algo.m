@@ -124,7 +124,13 @@ end for;
 Sp:=IndependentGenerators(Pp);
 S:=[P[Index(Pp,Sp[i])] : i in [1 .. #Sp] ];
 
-r,e1,e2,S:=RationalEllipticSurface(E);
+T:=[];
+for i in Pp do;
+if Height(i) eq 0 then;
+Include(~T,i);
+end if; end for;
+
+return r,e1,e2,S,T
 end function;
 
 
