@@ -1,17 +1,6 @@
-/*When on Toby*/
-Attach("/home/blair/+IdealsNF.m");
-Attach("/home/blair/Subfields.m");
-Attach("/home/blair/Galois.m");
-Attach("/home/blair/GalAuto.m");
-Attach("/home/blair/Invar.m");
-
-
-
 Attach("AutSplit.m");
 
 _<t>:=FunctionField(Rationals());
-E:=EllipticCurve([0,t^4+t^2]);
-
 
 function RationalEllipticSurface(E);
 
@@ -164,11 +153,7 @@ return #S, e1, e2,S,F;
 
 end function;
 
-//Done!!
-
-
 r,e1,e2,S,F:=RationalEllipticSurface(E);
-
 
 /*
 Examples:
