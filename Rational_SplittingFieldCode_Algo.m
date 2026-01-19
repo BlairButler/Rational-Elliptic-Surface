@@ -18,14 +18,18 @@ _,P:=PrimaryDecomposition(I);
 _<z>:=PolynomialRing(Rationals());
 
 poly:=[];
-
-for i in [1 .. #P] do;
-b:=UnivariateEliminationIdealGenerators(P[i]);
+polyHigh:=[];
 
 for j in [1 .. #b] do;
 addPoly,_:=UnivariatePolynomial(b[j]);
 if Degree(addPoly) gt 1 then;
-Include(~poly,addPoly); end if;
+
+if Degree(addPoly) lt 30 then;
+Include(~poly,addPoly); 
+else;
+Include(~polyHigh,addPoly);
+end if;
+end if;
 end for; end for;
 
 NumbFlds:=[OptimisedRepresentation(NumberField(i)) : i in poly];
@@ -47,6 +51,9 @@ end for;
 end while;
 
 pols:=[DefiningPolynomial(i) : i in IsomClass];
+for i in polyHigh do;
+Append(~pols,i); end for;
+
 
 //K:=SplittingField(pols);
 time e1,e2,e3,e4 := SplitAutGrp(pols:Prime := NextPrime(10^6)); //Replace K with this//
