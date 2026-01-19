@@ -4,7 +4,7 @@ _<t>:=FunctionField(Rationals());
 
 function RatESInformation(E);
 
-_<[a]> := PolynomialRing(Parent(t),7);
+_<[a]> := PolynomialRing(Rationals(),7);
 _<tt> := PolynomialRing(Universe(a));
 x := a[1]*tt^2 + a[2]*tt + a[3];
 y := a[4]*tt^3 + a[5]*tt^2 + a[6]*tt + a[7];
@@ -18,18 +18,14 @@ _,P:=PrimaryDecomposition(I);
 _<z>:=PolynomialRing(Rationals());
 
 poly:=[];
-polyHigh:=[];
+
+for i in [1 .. #P] do;
+b:=UnivariateEliminationIdealGenerators(P[i]);
 
 for j in [1 .. #b] do;
 addPoly,_:=UnivariatePolynomial(b[j]);
 if Degree(addPoly) gt 1 then;
-
-if Degree(addPoly) lt 30 then;
-Include(~poly,addPoly); 
-else;
-Include(~polyHigh,addPoly);
-end if;
-end if;
+Include(~poly,addPoly); end if;
 end for; end for;
 
 NumbFlds:=[OptimisedRepresentation(NumberField(i)) : i in poly];
@@ -51,9 +47,6 @@ end for;
 end while;
 
 pols:=[DefiningPolynomial(i) : i in IsomClass];
-for i in polyHigh do;
-Append(~pols,i); end for;
-
 
 //K:=SplittingField(pols);
 time e1,e2,e3,e4 := SplitAutGrp(pols:Prime := NextPrime(10^6)); //Replace K with this//
@@ -124,18 +117,14 @@ end for;
 Sp:=IndependentGenerators(Pp);
 S:=[P[Index(Pp,Sp[i])] : i in [1 .. #Sp] ];
 
+r:=#S;
 T:=[];
 for i in Pp do;
 if Height(i) eq 0 then;
 Include(~T,i);
 end if; end for;
 
-return r,e1,e2,S,T
-end function;
-
-
-function RatESRepresentation(E,r,e1,e2,S);
-
+gal:=Inverse(NumberingMap(e2));
 M:=[];
 time for i in [1 .. #e2] do;
 g:=[];
@@ -168,12 +157,11 @@ C:=GModule(e2,B);
 D:=ConstituentsWithMultiplicities(C);
 F:=[<Character(D[i][1]),D[i][2]> : i in [1 .. #D]];
 
-return F;
+return r,e1,e2,S,T,F;
 
 end function;
 
 r,e1,e2,S,F:=RationalEllipticSurface(E);
-F:=RationalEllipticSurface(E,r,e1,e2,S,);
 
 /*
 Examples:
