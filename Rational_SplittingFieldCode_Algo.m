@@ -161,7 +161,7 @@ return r,e1,e2,S,T,F;
 
 end function;
 
-r,e1,e2,S,F:=RationalEllipticSurface(E);
+r,e1,e2,S,F:=RatESInformation(E);
 
 /*
 Examples:
