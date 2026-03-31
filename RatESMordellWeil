@@ -1,0 +1,134 @@
+//Code that just computes the generators for the MordellWeil group, plus field of definition.
+//Does not compute the irreducible representation.
+
+Attach("AutSplit.m");
+
+function RatESMordellWeil(E)
+_<[a]> := PolynomialRing(CoefficientField(CoefficientField(E)),7);
+_<tt> := PolynomialRing(Universe(a));
+x := a[1]*tt^2 + a[2]*tt + a[3];
+y := a[4]*tt^3 + a[5]*tt^2 + a[6]*tt + a[7];
+ftmap:=hom<Parent(t) -> Parent(tt)| tt>;
+coor:=[Parent(x)!ftmap(Coefficients(E))[i] : i in [1..5] ];
+cfs:= Coefficients(y^2 + coor[1]*x*y + coor[3]*y -x^3 - coor[2]*x^2-coor[4]*x-coor[5]);
+I:=ideal<Universe(a) | cfs>;
+_,P:=PrimaryDecomposition(I);
+//X := Cluster(AffineSpace(Universe(a)),cfs);
+
+_<z>:=PolynomialRing(Rationals());
+
+poly:=[];
+
+for i in [1 .. #P] do;
+b:=UnivariateEliminationIdealGenerators(P[i]);
+
+for j in [1 .. #b] do;
+addPoly,_:=UnivariatePolynomial(b[j]);
+if Degree(addPoly) gt 1 then;
+Include(~poly,addPoly); end if;
+end for; end for;
+
+NumbFlds:=[OptimisedRepresentation((AbsoluteField(NumberField(i)))) : i in poly];
+
+IsomClass:=[];
+while #NumbFlds gt 0 do;
+Append(~IsomClass,NumbFlds[1]);
+ridOf:=[NumbFlds[1]];
+for j in [2 .. #NumbFlds] do;
+if IsIsomorphic(NumbFlds[1],NumbFlds[j]) eq true then;
+Append(~ridOf,NumbFlds[j]);
+end if;
+end for;
+
+for j in [1 .. #ridOf] do;
+Exclude(~NumbFlds,ridOf[j]);
+end for;
+
+end while;
+
+pols:=[DefiningPolynomial(i) : i in IsomClass];
+
+//K:=SplittingField(pols);
+time e1,e2,e3,e4 := SplitAutGrp(pols:Prime := NextPrime(10^6)); //Replace K with this//
+
+//Next up I want the 240 points.
+//Cheat way: 
+X := Cluster(AffineSpace(Universe(a)),cfs);
+IsSubfield(K,e1);
+time Y:=Points(X,e1);
+
+e1t<tt>:=FunctionField(e1);
+Et:=ChangeRing(E,e1t);
+
+P:=[];
+for i in [1 .. #Y] do
+P[i]:=Et![Y[i][1]*tt^2+Y[i][2]*tt+Y[i][3],Y[i][4]*tt^3+Y[i][5]*tt^2+Y[i][6]*tt+Y[i][7],1];
+end for;
+
+function PrimeUse(poly);
+
+test:=0;
+while test eq 0 do;
+p:=RandomPrime(20);
+e1p:=GF(p);
+_<x>:=PolynomialRing(e1p);
+
+polyP:=[ChangeRing(i,e1p) : i in pols];
+
+
+test:=1;
+for i in [1 .. #polyP] do;
+if #Roots(polyP[i]) ne Degree(polyP[i]) then;
+test:=0;
+end if;
+end for;
+
+ZK:= RingOfIntegers(e1);
+Gpideal:=p*ZK;
+primeID:=Factorization(Gpideal)[1][1];
+
+if RamificationDegree(primeID,p) gt 1 then;
+test:=0;
+end if;
+
+end while;
+return p,primeID;
+end function;
+
+p,primeID:=PrimeUse(poly);
+
+
+Gp:=GF(p);
+Gz<z>:=PolynomialRing(Gp);
+Gtp<tp>:=FunctionField(Gp);
+
+gal:=Inverse(NumberingMap(e2));
+ZK:= RingOfIntegers(e1);
+FFpp, mpp :=ResidueClassField(primeID);
+Fpt<tp>:=FunctionField(FFpp);
+ZKt<tt> :=PolynomialRing(ZK);
+bar := map<ZKt -> Fpt | f :-> Fpt![mpp(c) : c in Eltseq(f)]>;
+if Degree(CoefficientField(CoefficientField(E))) eq 1 then;
+Ep:=ChangeRing(E,Fpt);
+else;
+red:=[Fpt![mpp(i) : i in Coefficients(Numerator(Coefficients(E)[j]))] : j in [1..5]];
+Ep:=EllipticCurve(red);
+end if;
+
+Pp:=[];
+for i in [1 .. #P] do;
+Pp[i]:=Ep![FFpp!(1/Denominator(Coefficient(Numerator(P[i][1]),2)))*bar(Numerator(Coefficient(Numerator(P[i][1]),2)))*tp^2+FFpp!(1/Denominator(Coefficient(Numerator(P[i][1]),1)))*bar(Numerator(Coefficient(Numerator(P[i][1]),1)))*tp+FFpp!(1/Denominator(Coefficient(Numerator(P[i][1]),0)))*bar(Numerator(Coefficient(Numerator(P[i][1]),0))),FFpp!(1/Denominator(Coefficient(Numerator(P[i][2]),3)))*bar(Numerator(Coefficient(Numerator(P[i][2]),3)))*tp^3+FFpp!(1/Denominator(Coefficient(Numerator(P[i][2]),2)))*bar(Numerator(Coefficient(Numerator(P[i][2]),2)))*tp^2+FFpp!(1/Denominator(Coefficient(Numerator(P[i][2]),1)))*bar(Numerator(Coefficient(Numerator(P[i][2]),1)))*tp+FFpp!(1/Denominator(Coefficient(Numerator(P[i][2]),0)))*bar(Numerator(Coefficient(Numerator(P[i][2]),0))),1];
+end for; 
+
+Sp:=IndependentGenerators(Pp);
+S:=[P[Index(Pp,Sp[i])] : i in [1 .. #Sp] ];
+
+r:=#S;
+T:=[];
+for i in Pp do;
+if Height(i) eq 0 then;
+Include(~T,i);
+end if; end for;
+
+return #S,S,T,e1,e2;
+end function;
