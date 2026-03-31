@@ -50,7 +50,7 @@ end if;
 end if;
 end for; end for;
 
-NumbFlds:=[OptimisedRepresentation(NumberField(i)) : i in poly];
+NumbFlds:=[OptimisedRepresentation((AbsoluteField(NumberField(i)))) : i in poly];
 
 IsomClass:=[];
 while #NumbFlds gt 0 do;
