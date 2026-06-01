@@ -1,0 +1,11 @@
+// ---------------------------------------------------------------------------
+// RatESSolve_Examples
+//
+// This includes the running code and output for two examples of RatESSolve.
+// 
+// y^2 = x^3 − 3*t*(t^2 − 1)*x +(t^2 − 1)^2 over QQ(t)
+//  y^2 = x^3 + it + 1 over QQ(i)(t), where i^2 = -1
+// ---------------------------------------------------------------------------
+
+
+//y^2 = x^3 − 3*t*(t^2 − 1)*x +(t^2 − 1)^2 over QQ(t)
