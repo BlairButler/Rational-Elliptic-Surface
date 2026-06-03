@@ -1,71 +1,66 @@
 // ---------------------------------------------------------------------------
 // y^2 = x^3 + t^2*(t+1)
 //
-// We are going to consider the Rank 2 K3 elliptic surface given above.
+// We are going to consider the Rank 2 elliptic surface given above.
 // We can then run a variation of algorithm 2 on this.
-// Since the arithmetic information is so "small", we can run this without any of the more advanced machinery.
+// 
 // 
 // ---------------------------------------------------------------------------
+Magma V2.29-1     
 
-_<[a]> := PolynomialRing(Rationals(),7);
-_<t> := PolynomialRing(Universe(a));
-x := a[1]*t^2 + a[2]*t + a[3];
-y := a[4]*t^3 + a[5]*t^2 + a[6]*t + a[7];
-cfs:= Coefficients(y^2-x^3-t^2*(t+1));
-X := Cluster(AffineSpace(Universe(a)),cfs);
-
-K<zeta>:=CyclotomicField(6);
-
-Y:=Points(X,K); 
-Kt<t>:=FunctionField(K);
-E:=EllipticCurve([Kt|0,t^2*(t+1)]);
-
-P:=[];
-for i in [1 .. 18] do
-P[i]:=E![Y[i][1]*t^2+Y[i][2]*t+Y[i][3],Y[i][4]*t^3+Y[i][5]*t^2+Y[i][6]*t+Y[i][7],1];
-end for;
-#P;
-
-Q:=[];
-for i in [1 .. 9] do
-Q[i]:=E![Y[2*i-1][1]*t^2+Y[2*i-1][2]*t+Y[2*i-1][3],Y[2*i-1][4]*t^3+Y[2*i-1][5]*t^2+Y[2*i-1][6]*t+Y[2*i-1][7],1];
-end for;
-
-S:=Basis(Q);
-
-A:=Automorphisms(K);
-e2:=AutomorphismGroup(K);
-
-M:=[];
-for i in [1 .. #A] do;
-g:=[];
-m:=[];
-for j in [1 .. #S] do;
-P:=E![A[i](Coefficient(Numerator(S[j][1]),2))*t^2 + A[i](Coefficient(Numerator(S[j][1]),1))*t + 1*A[i](Coefficient(Numerator(S[j][1]),0)),A[i](Coefficient(Numerator(S[j][2]),3))*t^3 + A[i](Coefficient(Numerator(S[j][2]),2))*t^2 + A[i](Coefficient(Numerator(S[j][2]),1))*t + A[i](Coefficient(Numerator(S[j][2]),0))*1];
-
-_,g[j]:=IsLinearlyDependent([S[1],S[2],P]);
-g[j];
-if g[j][3] eq -1 then;
-m[j]:=[g[j][1],g[j][2]]; end if;
-if g[j][3] eq 1 then;
-m[j]:=[-g[j][1],-g[j][2]]; end if;
-
-end for;
-
-M[i]:=Matrix(Rationals(),2,2,[m[1][1],m[2][1],m[1][2],m[2][2]]);
-M[i];
-end for;
-
-
-GalG:=MatrixGroup<#S,Rationals()|M>;
-
-can,iso:=IsIsomorphic(e2,GalG);
-
-yum:=[M[Index(M,Eltseq(iso(e2.i)))] : i in [1 .. #Generators(e2)]];
-
-
-A:=MatrixAlgebra<Rationals(),#S|yum>;
-B:=RModule(A) ;
-C:=GModule(e2,B);
-D:=ConstituentsWithMultiplicities(C);
-F:=[<Character(D[i][1]),D[i][2]> : i in [1 .. #D]];
+> load "rat_ell_surface.magma";                                     
+Loading "rat_ell_surface.magma"
+Loading "AutSplit.m"
+> R<t>:=FunctionField(Rationals());
+> 
+> E:=EllipticCurve([0,t^2*(t+1)]);
+> time RatESSolve(E:UsePD:=true);
+Option B: 3 bad fiber(s), Shioda-Tate rank = 2.
+Option B: → Points/Variety path.
+Step 1: Ideal formed (7 generators).
+Step 2: Primary decomposition...
+Step 2: 1 base univariate(s), 1 extra univariate(s) for K.
+Option A: estimated splitting field degree = 2 → Variety path.
+Step 3: Calling SplitAutGrp...
+Calling Galois group.
+Computing defining polynomial of splitting field.
+Building GaloisData of splitting field.
+Building automorphism group.
+Computing roots of initial polynomial in the splitting field.
+Calling lift, MaxPrec = 7
+Calling lift, MaxPrec = 7
+Calling lift, MaxPrec = 7
+Calling lift, MaxPrec = 7
+Step 3: K = Number Field with defining polynomial $.1^2 + 192 over the Rational 
+Field, |Aut| = 2.
+Steps 4-5: Solving section ideal over K via Variety.
+Steps 4-5: 18 total section(s) found.
+Step 5b: Finding torsion and generators...
+Step 5b: Reducing mod p = 626173.
+Step 5b: 0 torsion point(s), rank = 2.
+Step 6: Building Galois representation...
+Step 6: 2 irreducible constituent(s).
+2 Number Field with defining polynomial $.1^2 + 192 over the Rational Field
+Symmetric group acting on a set of cardinality 2
+Order = 2
+    (1, 2)
+[
+    [
+        -$.1 - 4/3,
+        -1/8*$.1*$.1 - 1/9*$.1
+    ],
+    [
+        1/16*(-$.1 + 8)*$.1,
+        -$.1
+    ]
+]
+[]
+[
+    <GModule of dimension 1 over Rational Field, 1>,
+    <GModule of dimension 1 over Rational Field, 1>
+]
+[
+    ( 1, 1 ),
+    ( 1, -1 )
+]
+Time: 5748.800
