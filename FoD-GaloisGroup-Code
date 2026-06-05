@@ -1,26 +1,19 @@
 \\Polynomials from all of the elliptic surfaces, to find the degree of the field of definition for y^2 = x^3 + t^360 + 1.
-\\The first 7 polynomials give a splitting field of degree 1728
-\\The final 10 polynomials give a splitting field of degree 5760
-\\All 17 polynomials together give a polynomial of degree 829,440
+\\All 11 polynomials together give a polynomial of degree 829,440
 
 Rx<x>:=PolynomialRing(Rationals());
-fl:=[x^2-x+1,
-x^8 - 8*x^7 + 22*x^6 - 44*x^5 + 160*x^4 - 452*x^3 + 640*x^2 - 416*x + 94,
-x^6 - 3*x^5 + 5*x^3 - 3*x + 1 ,
-x^8 - 8*x^7 + 28*x^6 - 56*x^5 - 2*x^4 + 232*x^3 - 404*x^2 + 280*x - 503,
+fl:=[x^2 - x + 1,
+x^8 - 6*x^4 - 3,
+x^6 - 3*x^5 + 5*x^3 - 3*x + 1,
 x^9 + 6*x^3 - 2,
-x^12 + 4*x^9 + 22*x^6 + 12*x^3 + 2,
-x^12 - 12*x^10 + 54*x^8 - 68*x^6 + 60*x^4 - 24*x^2 + 6,
-
-x^8 + 3*x^7 - 2*x^6 - 9*x^5 + 6*x^3 - 2*x^2 + 3*x + 1,
-x^3 - 23*x^2 - 7*x - 1,
-x^5 - 60*x^2 + 480*x - 750,
 x^8 - x^7 + 2*x^6 + 2*x^5 - 5*x^4 + 13*x^3 - 13*x^2 + x + 1,
-x^3 + x^2 - 3*x + 3,
-x^5 + 9*x^4 + 24*x^3 + 24*x^2 + 9*x + 3,
-x^4 + x^3 + x^2 + x + 1,
-x^4 - 2*x^3 + 4*x^2 + 12*x + 6,
-x^3 - 5,
-x^16 - 60*x^12 - 370*x^8 - 300*x^4 + 25];
+x^5 - x^4 + 4*x^3 + 4*x^2 - x + 13,
+x^3 - x^2 - 3*x - 3,
+x^12 - 4*x^9 + 22*x^6 - 12*x^3 + 2,
+x^12 + 4*x^6 + 54,
+x^16-60*x^12-370*x^8-300*x^4+25,
+x^4-x^3+x^2-x+1,
+x^4-2*x^3+4*x^2+12*x+6,
+x^3-5];
 time G,r,S:=GaloisGroup(&*fl);
 #G;
