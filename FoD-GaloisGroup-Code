@@ -1,7 +1,7 @@
 \\Polynomials from all of the elliptic surfaces, to find the degree of the field of definition for y^2 = x^3 + t^360 + 1.
 \\All 11 polynomials together give a polynomial of degree 829,440
 
-Rx<x>:=PolynomialRing(Rationals());
+Rx<x>:=PolynomialRing(Integers());
 fl:=[x^2 - x + 1,
 x^8 - 6*x^4 - 3,
 x^6 - 3*x^5 + 5*x^3 - 3*x + 1,
@@ -15,5 +15,9 @@ x^16-60*x^12-370*x^8-300*x^4+25,
 x^4-x^3+x^2-x+1,
 x^4-2*x^3+4*x^2+12*x+6,
 x^3-5];
+f:=&*fl;
 time G,r,S:=GaloisGroup(&*fl);
 #G;
+
+time GaloisProof(f,S);
+//Returned true after 41.320 seconds.
